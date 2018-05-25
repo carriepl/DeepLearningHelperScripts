@@ -31,7 +31,8 @@ def explore_projection(model, X, Y=None, discrete_labels=False, out_filename=Non
     Args:
         model (class): Sklearn class implementing a projection
             Non-sklearn classes may be used but they must offer the methods
-            fit() and transform() with the same interfaces as in sklearn.
+            fit() and transform(), or the method fit_transform() with the same
+            interface as in sklearn.
         X (numpy 2d array): Inputs of the dataset to analyse
         Y (numpy 1d array): Labels of the dataset to analyse (if applicable).
             Defaults to None (no labels provided).
@@ -41,16 +42,24 @@ def explore_projection(model, X, Y=None, discrete_labels=False, out_filename=Non
             Defaults to None (which will display the plot instead of saving it).
     """
 
-    # Fit the projection on a random subset of the data to ensure it doesn't
-    # take too much computation.
-    numpy.random.seed(123)
-    subset_indices = numpy.arange(len(X))
-    numpy.random.shuffle(subset_indices)
-    model.fit(X[subset_indices[:5000]])
+    # If possible, fit the projection on a random subset of the data to ensure
+    # it doesn't take too much computation.
+    try:
+        numpy.random.seed(123)
+        subset_indices = numpy.arange(len(X))
+        numpy.random.shuffle(subset_indices)
+        model.fit(X[subset_indices[:5000]])
+
+        transformed_X = model.transform(X)[:, :2]
+
+    except AttributeError:
+        # The fit() or the transform() method is not implemented. this means
+        # this is a model that must be trained on all the data to be
+        # transformed (like T-SNE). In this case, use the fit_transform()
+        # interface.
+        transformed_X = model.fit_transform(X)[:, :2]
 
     # Plot the transformed data (colored by Ys, if possible)
-    transformed_X = model.transform(X)[:, :2]
-
     plot.figure(figsize=(10, 8))
     if Y is None:
         plot.scatter(transformed_X[:1000, 0], transformed_X[:1000, 1], s=10)
