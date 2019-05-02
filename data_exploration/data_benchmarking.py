@@ -363,7 +363,7 @@ if __name__ == '__main__':
     test_x = data[125:]
     test_y = target[125:]
 
-    # Run benchmark (the MNIST labels are classes, not continuous variables) so
+    # Run benchmark (the IRIS labels are classes, not continuous variables) so
     # it is a classification task.
     classification_benchmark(train_x, train_y, valid_x, valid_y, test_x, test_y)
     #regression_benchmark(train_x, train_y, valid_x, valid_y, test_x, test_y)
