@@ -142,7 +142,7 @@ def build_mlp(hyperparams, nb_input_feats, nb_classes):
     if hyperparams["dropout"]:
         model.add(Dropout(0.5))
 
-    for hidden_layer in range(hyperparams["nb_hidden_layers"]):
+    for hidden_layer in range(hyperparams["nb_hidden_layers"] - 1):
 
         model.add(Dense(hyperparams["layer_size"], activation="relu",
                         kernel_regularizer=l2(hyperparams["l2_coeff"])))
